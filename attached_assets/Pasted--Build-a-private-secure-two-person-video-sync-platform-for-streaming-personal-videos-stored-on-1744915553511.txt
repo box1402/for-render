@@ -1,0 +1,148 @@
+
+Build a **private, secure two-person video sync platform** for streaming personal videos stored on **AWS S3**, where both viewers can control playback in real time. The site should be **password-protected**, hosted on **Replit**, and should not require any third-party accounts or public access.
+
+---
+
+## 🔧 Tech Stack
+
+- **Frontend**: HTML, CSS, JavaScript (Vanilla or small libraries)
+- **Backend**: Node.js with Express
+- **Realtime Communication**: Socket.IO
+- **Video Hosting**: AWS S3 (private bucket)
+- **Hosting Platform**: Replit (full-stack project)
+- **Secrets Management**: Replit Environment Variables
+
+---
+
+## 🔐 Security Requirements
+
+### Password Protection
+- Each video room requires a password to access.
+- Passwords should not be sent or stored in plain text.
+- Users must authenticate before they can join a room or view any content.
+- Authentication occurs on the backend; the frontend only displays the video page once access is granted.
+
+### Encrypted Rooms
+- All room passwords and metadata are stored securely using environment variables on Replit.
+- Password validation is performed entirely server-side to prevent tampering.
+- No frontend access to sensitive room configuration or AWS credentials.
+
+### S3 Access Control
+- All videos are stored in a **private** S3 bucket.
+- Backend generates **short-lived signed URLs** to serve video content.
+- These URLs expire after a defined time period, preventing reuse or sharing.
+- Videos are not discoverable without a valid password and access request.
+
+---
+
+## 🧱 Key Features
+
+### Two-Person Sync
+- Two people can join a room and control playback collaboratively.
+- Any action taken by one user (play, pause, seek) is instantly mirrored on the other user’s screen.
+- Real-time synchronization is managed using web sockets.
+
+### Room-Based Streaming
+- Each room is uniquely identified and tied to a specific video file.
+- Only one video per room, configured securely on the backend.
+- Only authenticated users can load and interact within a room.
+
+### Room Access Flow
+- Homepage presents form for room name and password.
+- User submits credentials to request access.
+- Backend authenticates credentials and responds with access authorization.
+- Upon successful authentication, the frontend loads the video and connects to the socket room.
+
+### Reconnection Logic
+- Users who leave or refresh are allowed to reconnect with the same credentials.
+- Optional feature to display “Waiting for second user…” until both are online.
+
+---
+
+## 🌐 Page Structure & Routes
+
+### Pages
+- **Homepage**: Login form for room name and password.
+- **Watch Page**: Video player with real-time socket sync.
+
+### Backend Routes
+- **Root Route**: Serves the homepage form.
+- **Auth Route**: Validates room name and password.
+- **Watch Route**: Renders the player only after successful authentication.
+- **WebSocket Endpoint**: Manages real-time sync between two users.
+
+---
+
+## 🧰 Environment Variables (Secrets)
+
+Stored securely in Replit, includes:
+
+- AWS credentials (Access Key ID, Secret Access Key)
+- AWS region and bucket name
+- Room names, passwords, and associated video metadata (as a JSON string or secure structure)
+
+No sensitive information should be exposed in frontend scripts or markup.
+
+---
+
+## 🧪 Testing Plan
+
+### Functional Testing
+- Validate that video sync behaves consistently across multiple browsers and devices.
+- Ensure password protection cannot be bypassed.
+- Confirm that unauthorized access to videos or routes is blocked.
+- Check that expired S3 URLs become unusable after the timeout period.
+
+### Security Testing
+- Attempt to access watch page directly without auth.
+- Try accessing S3 video links outside the allowed flow.
+- Test for socket event spoofing or unsanctioned sync commands.
+- Test secrets exposure through browser tools or DevTools.
+
+### Compatibility Testing
+- Cross-browser testing (Chrome, Firefox, Safari, Edge)
+- Responsive layout for both desktop and mobile
+- Streaming quality checks over different networks
+
+---
+
+## 📦 Folder Structure Overview
+
+- **Public**: Static assets like CSS, JavaScript, and images
+- **Views**: Templated pages (if using a templating engine)
+- **Routes**: Backend route handlers for auth, watch, etc.
+- **Utils**: Helper functions (e.g., to generate signed S3 URLs)
+- **Server Entry Point**: Main file initializing Express and Socket.IO
+- **Secrets File**: Environment variables configured in Replit
+
+---
+
+## 🚀 Deployment Instructions (Replit)
+
+1. Fork the project into your Replit workspace.
+2. Set all required secrets using the Secrets panel.
+3. Upload your private video files to your AWS S3 bucket.
+4. Configure room names, passwords, and S3 file references in environment variables.
+5. Run the project and verify on Replit preview link.
+6. Share the URL with your partner and enter the agreed-upon credentials.
+
+---
+
+## 📈 Future Enhancements (Optional)
+
+- Add chat functionality for messages below the video player.
+- Show online/offline indicators for both users in a room.
+- Add subtitle support (.srt file integration).
+- Build “Room Management” dashboard to add/remove rooms dynamically.
+- Implement persistent video progress saving (resume feature).
+- Explore converting to a Progressive Web App (PWA) for mobile install.
+- Add night mode UI toggle.
+
+---
+
+## 🛑 Final Notes
+
+- This is a **private-use-only platform**; do not expose publicly or use with unlicensed content.
+- Maintain AWS S3 bucket privacy and rotate credentials regularly.
+- Replit secrets should be reviewed and kept up to date.
+- Do not allow public search engine indexing or sharing of the main Replit URL.
